@@ -3,7 +3,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/Epyon01P/Peak-Power-Indicator)](https://github.com/Epyon01P/Peak-Power-Indicator/releases)
 [![GitHub Issues](https://img.shields.io/github/issues/Epyon01P/Peak-Power-Indicator)](https://github.com/Epyon01P/Peak-Power-Indicator/issues)
 
-This project is the physical ESPHome companion to [Peak Power Forecast](https://github.com/Epyon01P/Peak-Power-Forecast), a Home Assistant integration that forecasts expected quarter-hour peak demand.
+This project is the physical ESPHome companion to [Peak Power Forecast](https://github.com/Epyon01P/Peak-Power-Forecast), a Home Assistant integration that forecasts expected quarter-hour peak demand. It comes with a [stylish enclosure you can 3D-print yourself](https://www.printables.com/model/1677923-peak-power-indicator-light).
 
 Peak Power Forecast performs the forecasting logic and exposes a live color entity (`sensor.peak_power_forecast_color`). Peak Power Indicator takes that entity and turns it into an always-visible LED signal in the room.
 
