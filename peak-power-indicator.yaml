@@ -9,8 +9,8 @@ esp32:
     type: arduino
 
 wifi:
-  ssid: "Aether"
-  password: "RaidillondelEauRouge0x03"
+  ssid: "MyWiFi"
+  password: "MyWiFiPassword"
 
 api:
 
