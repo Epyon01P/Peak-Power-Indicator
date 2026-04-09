@@ -142,3 +142,6 @@ Lux input is smoothed with a sliding window moving average (~60s in the default 
 - High household acceptance (visible but unobtrusive)
 - Minimal device-side complexity
 - Forecast intelligence stays in Home Assistant
+
+## License
+This work is licensed under a Creative Commons (4.0 International License): **Attribution**
