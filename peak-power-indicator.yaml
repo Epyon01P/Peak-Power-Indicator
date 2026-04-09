@@ -1,0 +1,213 @@
+esphome:
+  name: peak-power-indicator-light
+  friendly_name: Peak Power Indicator Light
+
+esp32:
+  board: lolin_s2_mini
+  variant: ESP32S2
+  framework:
+    type: arduino
+
+wifi:
+  ssid: "Aether"
+  password: "RaidillondelEauRouge0x03"
+
+api:
+
+ota:
+  - platform: esphome
+
+i2c:
+  sda: GPIO8
+  scl: GPIO9
+  scan: true
+
+light:
+  - platform: esp32_rmt_led_strip
+    chipset: WS2812
+    rgb_order: GRB
+    pin: GPIO14
+    num_leds: 12
+    id: status_led_light
+    default_transition_length: 0.5s
+    restore_mode: ALWAYS_ON
+
+globals:
+  - id: auto_brightness_state
+    type: bool
+    restore_value: yes
+    initial_value: "true"
+
+switch:
+  - platform: template
+    name: "Auto brightness"
+    id: auto_brightness_switch
+    restore_mode: RESTORE_DEFAULT_ON
+    lambda: |-
+      return id(auto_brightness_state);
+    turn_on_action:
+      - lambda: |-
+          id(auto_brightness_state) = true;
+      - script.execute: apply_led_state_script
+    turn_off_action:
+      - lambda: |-
+          id(auto_brightness_state) = false;
+      - script.execute: apply_led_state_script
+
+number:
+  - platform: template
+    name: "Manual LED brightness"
+    id: manual_led_brightness_number
+    min_value: 0
+    max_value: 100
+    step: 1
+    unit_of_measurement: "%"
+    mode: slider
+    optimistic: true
+    restore_value: true
+    initial_value: 50
+    set_action:
+      - script.execute: apply_led_state_script
+  - platform: template
+    name: "Auto brightness min LED brightness"
+    id: auto_brightness_min_led_brightness_number
+    entity_category: config
+    min_value: 0
+    max_value: 100
+    step: 1
+    unit_of_measurement: "%"
+    mode: slider
+    optimistic: true
+    restore_value: true
+    initial_value: 15
+    set_action:
+      - script.execute: apply_led_state_script
+  - platform: template
+    name: "Auto brightness max lux"
+    id: auto_brightness_max_lux_number
+    entity_category: config
+    min_value: 100
+    max_value: 4500
+    step: 100
+    unit_of_measurement: "lx"
+    mode: slider
+    optimistic: true
+    restore_value: true
+    initial_value: 600
+    set_action:
+      - script.execute: apply_led_state_script
+  - platform: template
+    name: "Auto brightness mid lux"
+    id: auto_brightness_mid_lux_number
+    entity_category: config
+    min_value: 10
+    max_value: 100
+    step: 10
+    unit_of_measurement: "lx"
+    mode: slider
+    optimistic: true
+    restore_value: true
+    initial_value: 50
+    set_action:
+      - script.execute: apply_led_state_script
+
+sensor:
+  - platform: bh1750
+    name: "Ambient light"
+    id: ambient_light_sensor
+    address: 0x23
+    update_interval: 5s
+    filters:
+      - sliding_window_moving_average:
+          window_size: 12
+          send_every: 1
+    on_value:
+      then:
+        - if:
+            condition:
+              switch.is_on: auto_brightness_switch
+            then:
+              - script.execute: apply_led_state_script
+
+  - platform: template
+    name: "Current LED brightness"
+    id: current_led_brightness_sensor
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    update_interval: never
+
+text_sensor:
+  - platform: homeassistant
+    id: peak_power_forecast_color_text_sensor
+    entity_id: sensor.peak_power_forecast_color
+    internal: true
+    on_value:
+      then:
+        - script.execute: apply_led_state_script
+
+script:
+  - id: apply_led_state_script
+    then:
+      - lambda: |-
+          float brightness;
+
+          if (id(auto_brightness_state)) {
+            float lux = id(ambient_light_sensor).state;
+
+            float min_lux = 0.0f;
+            float mid_lux = id(auto_brightness_mid_lux_number).state;
+            float max_lux = id(auto_brightness_max_lux_number).state;
+
+            float min_b = id(auto_brightness_min_led_brightness_number).state / 100.0f;
+            float mid_b = 0.5f;
+            float max_b = 1.0f;
+
+            if (isnan(lux)) {
+              brightness = min_b;
+            } else {
+              if (lux < min_lux) lux = min_lux;
+
+              if (lux <= mid_lux) {
+                // Segment 1: 0 → mid
+                float x = (lux - min_lux) / (mid_lux - min_lux);
+                brightness = min_b + x * (mid_b - min_b);
+              } else {
+                // Segment 2: mid → max
+                if (lux > max_lux) lux = max_lux;
+
+                float x = (lux - mid_lux) / (max_lux - mid_lux);
+                brightness = mid_b + x * (max_b - mid_b);
+              }
+            }
+          } else {
+            brightness = id(manual_led_brightness_number).state / 100.0f;
+          }
+
+          id(current_led_brightness_sensor).publish_state(brightness * 100.0f);
+
+          auto call = id(status_led_light).turn_on();
+          call.set_brightness(brightness);
+
+          float r = 0.0f, g = 1.0f, b = 0.0f;  // fallback green
+
+          std::string s = id(peak_power_forecast_color_text_sensor).state;
+
+          if (s.size() == 7 && s[0] == '#') {
+            auto hex_to_int = [](char c) -> int {
+              if (c >= '0' && c <= '9') return c - '0';
+              if (c >= 'a' && c <= 'f') return 10 + (c - 'a');
+              if (c >= 'A' && c <= 'F') return 10 + (c - 'A');
+              return 0;
+            };
+
+            int ri = hex_to_int(s[1]) * 16 + hex_to_int(s[2]);
+            int gi = hex_to_int(s[3]) * 16 + hex_to_int(s[4]);
+            int bi = hex_to_int(s[5]) * 16 + hex_to_int(s[6]);
+
+            r = ri / 255.0f;
+            g = gi / 255.0f;
+            b = bi / 255.0f;
+          }
+
+          call.set_rgb(r, g, b);
+          call.perform();
