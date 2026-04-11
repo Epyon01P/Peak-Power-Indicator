@@ -3,11 +3,14 @@
 [![GitHub Release](https://img.shields.io/github/v/release/Epyon01P/Peak-Power-Indicator)](https://github.com/Epyon01P/Peak-Power-Indicator/releases)
 [![GitHub Issues](https://img.shields.io/github/issues/Epyon01P/Peak-Power-Indicator)](https://github.com/Epyon01P/Peak-Power-Indicator/issues)
 
-This project is the physical ESPHome companion to [Peak Power Forecast](https://github.com/Epyon01P/Peak-Power-Forecast), a Home Assistant integration that forecasts expected quarter-hour peak demand. It comes with a [stylish enclosure you can 3D-print yourself](https://www.printables.com/model/1677923-peak-power-indicator-light).
+This project is the physical companion to [Peak Power Forecast](https://github.com/Epyon01P/Peak-Power-Forecast), a Home Assistant integration that forecasts expected quarter-hour peak demand. *Peak Power Forecast* performs the forecasting calculation, *Peak Power Indicator* takes that forecast and turns it into an always-visible LED signal in the room:
+- Green: headroom available
+- Amber: warning zone
+- Red: critical zone
 
-Peak Power Forecast performs the forecasting logic and exposes a live color entity (`sensor.peak_power_forecast_color`). Peak Power Indicator takes that entity and turns it into an always-visible LED signal in the room.
+ ![Peak Power Indicator](peak-power-light.png)
 
-In other words: this repo is the hardware/UI layer for the forecasting integration in the other repo. They are designed to work together as one system (forecast intelligence in Home Assistant, ambient visual output on the device).
+*Peak Power Forecast* is a ESPhome configuration you can flash to a ESP32 device. For the LED signal you can connect a WS2812b LED ring. It also has auto-brightness control by using a BH1750 ambient brightness sensor. Files to print a stylish enclosure you can 3D-print yourself can be found [here](https://www.printables.com/model/1677923-peak-power-indicator-light).
 
 The core concept is simple:
 
@@ -28,8 +31,8 @@ The goal is to make peak-awareness passive, immediate, and household-friendly: y
 - Home Assistant with [Peak Power Forecast](https://github.com/Epyon01P/Peak-Power-Forecast) installed
 - The entity `sensor.peak_power_forecast_color`
 - ESPHome device (tested on ESP32-S2 / Wemos S2 Mini)
-- LED ring (tested with WS2812B, 12 LEDs)
-- Ambient light sensor BH1750 (optional but recommended for auto brightness)
+- LED ring (WS2812B, tested with 12 LEDs)
+- Ambient light sensor BH1750 (for auto brightness)
 
 ## Features
 
