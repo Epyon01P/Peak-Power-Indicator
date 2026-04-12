@@ -10,7 +10,7 @@ This project is the physical companion to [Peak Power Forecast](https://github.c
 
  ![Peak Power Indicator](peak-power-light.png)
 
-*Peak Power Forecast* is a [[ESPhome configuration](https://esphome.io/) you can flash to a ESP32 device. For the LED signal you can connect a WS2812b LED ring. It also has auto-brightness control by using a BH1750 ambient brightness sensor. Files to print a stylish enclosure you can 3D-print yourself can be found [here](https://www.printables.com/model/1677923-peak-power-indicator-light).
+*Peak Power Forecast* is a [ESPhome configuration](https://esphome.io/) you can flash to a ESP32 device. For the LED signal you can connect a WS2812b LED ring. It also has auto-brightness control by using a BH1750 ambient brightness sensor. Files to print a stylish enclosure you can 3D-print yourself can be found [here](https://www.printables.com/model/1677923-peak-power-indicator-light).
 
 The core concept is simple:
 
@@ -23,9 +23,8 @@ The goal is to make peak-awareness passive, immediate, and household-friendly: y
 ## Requirements
 
 - Home Assistant with [Peak Power Forecast](https://github.com/Epyon01P/Peak-Power-Forecast) installed
-- The entity `sensor.peak_power_forecast_color`
 - ESPHome device (tested on ESP32-S2 / Wemos S2 Mini)
-- LED ring (WS2812B, tested with 12 LEDs)
+- WS2812B LED (tested with a 12 LED ring)
 - Ambient light sensor BH1750 (for auto brightness)
 
 ## Features
@@ -33,7 +32,7 @@ The goal is to make peak-awareness passive, immediate, and household-friendly: y
 - Real-time LED color updates from `sensor.peak_power_forecast_color`
 - Auto brightness based on ambient lux (BH1750)
 - Manual brightness override
-- Piecewise brightness curve tuned for low-light usability
+- Brightness curve tuned for low- and high light usability
 - Home Assistant-exposed controls for brightness tuning
 - Smoothing on lux input to reduce visual flicker
 
@@ -50,14 +49,6 @@ The goal is to make peak-awareness passive, immediate, and household-friendly: y
 5. **Home Assistant controls and telemetry**  
    Brightness parameters and live feedback are exposed as entities so behavior can be tuned without reflashing.
 
-## Architecture
-
-`Peak Power Forecast (HA)` -> `sensor.peak_power_forecast_color` -> `ESPHome` -> `LED ring`
-
-- Home Assistant computes forecast and color
-- ESPHome applies brightness logic and drives the LEDs
-- BH1750 input controls brightness when auto mode is enabled
-
 ## Hardware
 
 Tested configuration:
@@ -73,8 +64,8 @@ Tested configuration:
   Measures room lux and drives auto-brightness behavior.
 
 - **Enclosure:** custom 3D-printed housing  
-  [Printables model](https://www.printables.com/model/1467547-led-ambient-lamp-wled-esp32-d1-mini-usb-c) used for this project.  
-  The enclosure is selected specifically because it fits the Wemos S2 Mini, BH1750 module, and AZDelivery LED ring, includes a small ambient-light window to reduce LED self-interference on the sensor, and diffuses light to keep the device unobtrusive.
+  I designed a [specific enclosure](https://www.printables.com/model/1677923-peak-power-indicator-light) for this project you can download from Printables.  
+  The enclosure fits the Wemos S2 Mini, BH1750 module, and AZDelivery LED ring, includes a small ambient-light window to reduce LED self-interference on the sensor, and diffuses light to keep the device unobtrusive.
 
 Notes:
 
