@@ -6,7 +6,7 @@
 This project is the physical companion to [Peak Power Forecast](https://github.com/Epyon01P/Peak-Power-Forecast), a Home Assistant integration that forecasts the expected quarter-hour peak demand. *Peak Power Forecast* performs the forecasting calculation, *Peak Power Indicator* takes that forecast and turns it into a visible, easy to understand LED signal:
 - Green: headroom available, safe to turn on other devices
 - Amber: warning zone, be careful to turn on other power-hungry devices
-- Red: critical zone, don't turn on new devices or even turn off others
+- Red: critical zone, don't turn on new devices or perhaps even turn off devices which are already on
 
  ![Peak Power Indicator](peak-power-light.png)
 
