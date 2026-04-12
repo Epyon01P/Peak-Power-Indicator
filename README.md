@@ -4,25 +4,19 @@
 [![GitHub Issues](https://img.shields.io/github/issues/Epyon01P/Peak-Power-Indicator)](https://github.com/Epyon01P/Peak-Power-Indicator/issues)
 
 This project is the physical companion to [Peak Power Forecast](https://github.com/Epyon01P/Peak-Power-Forecast), a Home Assistant integration that forecasts the expected quarter-hour peak demand. *Peak Power Forecast* performs the forecasting calculation, *Peak Power Indicator* takes that forecast and turns it into a visible, easy to understand LED signal:
-- Green: headroom available
-- Amber: warning zone
-- Red: critical zone
+- Green: headroom available, safe to turn on other devices
+- Amber: warning zone, be careful to turn on other power-hungry devices
+- Red: critical zone, don't turn on new devices or even turn off others
 
  ![Peak Power Indicator](peak-power-light.png)
 
-*Peak Power Forecast* is a ESPhome configuration you can flash to a ESP32 device. For the LED signal you can connect a WS2812b LED ring. It also has auto-brightness control by using a BH1750 ambient brightness sensor. Files to print a stylish enclosure you can 3D-print yourself can be found [here](https://www.printables.com/model/1677923-peak-power-indicator-light).
+*Peak Power Forecast* is a [[ESPhome configuration](https://esphome.io/) you can flash to a ESP32 device. For the LED signal you can connect a WS2812b LED ring. It also has auto-brightness control by using a BH1750 ambient brightness sensor. Files to print a stylish enclosure you can 3D-print yourself can be found [here](https://www.printables.com/model/1677923-peak-power-indicator-light).
 
 The core concept is simple:
 
 - Home Assistant computes a predicted quarter-hour peak value.
 - That prediction is translated to a color state.
 - This device receives that color and renders it on a WS2812B LED ring.
-
-Instead of checking dashboards, this companion device creates an always-visible ambient signal based on `sensor.peak_power_forecast_color`:
-
-- Green: headroom available
-- Amber: warning zone
-- Red: critical zone
 
 The goal is to make peak-awareness passive, immediate, and household-friendly: you can see the situation at a glance from across the room, with no app interaction.
 
