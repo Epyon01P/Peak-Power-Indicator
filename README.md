@@ -123,13 +123,5 @@ This gives better practical behavior than a single linear mapping, especially in
 
 Lux input is smoothed with a sliding window moving average (~60s in the default config) to reduce flicker from rapid ambient light changes.
 
-## Design Philosophy
-
-- Always-on passive feedback
-- No user interaction required during normal use
-- High household acceptance (visible but unobtrusive)
-- Minimal device-side complexity
-- Forecast intelligence stays in Home Assistant
-
 ## License
 This work is licensed under a Creative Commons (4.0 International License): **Attribution**
